@@ -4,8 +4,11 @@ import { collection, addDoc, getDocs } from "firebase/firestore";
 import { db } from "./firebase";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase";
+import { useTranslation } from "react-i18next";
 
 function App() {
+  const { t, i18n } = useTranslation();
+
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -16,13 +19,11 @@ function App() {
   });
 
   const [errors, setErrors] = useState({});
-
   const [searchId, setSearchId] = useState("");
   const [searchedUser, setSearchedUser] = useState(null);
-
   const [users, setUsers] = useState([]);
 
-  // 🔐 auto login
+  // 🔐 auth check
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setIsLoggedIn(!!user);
@@ -48,40 +49,29 @@ function App() {
   }, [isLoggedIn]);
 
   // validation
- const validateForm = () => {
-  let tempErrors = {};
+  const validateForm = () => {
+    let tempErrors = {};
 
-  // Full Name
-  if (!formData.fullName.trim()) {
-    tempErrors.fullName = "Full name is required";
-  } else if (!/^[A-Za-z\s]{3,}$/.test(formData.fullName)) {
-    tempErrors.fullName = "Only letters, minimum 3 characters";
-  }
+    if (!formData.fullName.trim()) {
+      tempErrors.fullName = t("fullNameRequired");
+    }
 
-  // DOB
-  if (!formData.dob) {
-    tempErrors.dob = "Date of birth is required";
-  }
+    if (!formData.dob) {
+      tempErrors.dob = t("dobRequired");
+    }
 
-  // Address (only letters and spaces)
-  if (!formData.address.trim()) {
-    tempErrors.address = "Address is required";
-  } else if (!/^[A-Za-z\s]+$/.test(formData.address)) {
-    tempErrors.address = "Address must contain only letters and spaces (no numbers)";
-  }
+    if (!formData.address.trim()) {
+      tempErrors.address = t("addressRequired");
+    }
 
-  // Phone (Ethiopian format)
-  if (!formData.phone.trim()) {
-    tempErrors.phone = "Phone number is required";
-  } else if (!/^(\+2519\d{8}|09\d{8})$/.test(formData.phone)) {
-    tempErrors.phone = "Phone must start with +2519 or 09";
-  }
+    if (!formData.phone.trim()) {
+      tempErrors.phone = t("phoneRequired");
+    }
 
-  setErrors(tempErrors);
-  return Object.keys(tempErrors).length === 0;
-};
+    setErrors(tempErrors);
+    return Object.keys(tempErrors).length === 0;
+  };
 
-  // input change
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -95,35 +85,29 @@ function App() {
 
     if (!validateForm()) return;
 
-    try {
-      const snapshot = await getDocs(collection(db, "citizens"));
-      const count = snapshot.size;
+    const snapshot = await getDocs(collection(db, "citizens"));
+    const count = snapshot.size;
 
-      const newUser = {
-        id: "ETH-NID-" + (count + 1).toString().padStart(6, "0"),
-        ...formData,
-        createdAt: new Date()
-      };
+    const newUser = {
+      id: "ETH-NID-" + (count + 1).toString().padStart(6, "0"),
+      ...formData,
+      createdAt: new Date()
+    };
 
-      await addDoc(collection(db, "citizens"), newUser);
+    await addDoc(collection(db, "citizens"), newUser);
 
-      alert("User Registered with ID: " + newUser.id);
+    alert(t("registered") + ": " + newUser.id);
 
-      setUsers([...users, newUser]);
+    setUsers([...users, newUser]);
 
-      setFormData({
-        fullName: "",
-        dob: "",
-        address: "",
-        phone: ""
-      });
+    setFormData({
+      fullName: "",
+      dob: "",
+      address: "",
+      phone: ""
+    });
 
-      setErrors({}); // clear errors
-
-    } catch (error) {
-      console.error(error);
-      alert("Error saving data!");
-    }
+    setErrors({});
   };
 
   // search
@@ -138,103 +122,122 @@ function App() {
       setSearchedUser(found);
     } else {
       setSearchedUser(null);
-      alert("Citizen not found!");
+      alert(t("notFound"));
     }
   };
 
   if (!isLoggedIn) {
-    return <Login onLogin={() => setIsLoggedIn(true)} />;
+    return <Login />;
   }
 
   return (
     <div style={{ padding: "20px", fontFamily: "Arial" }}>
 
+      {/* 🌍 LANGUAGE SWITCHER */}
+      <div style={{ marginBottom: "10px" }}>
+        <button onClick={() => i18n.changeLanguage("en")}>English</button>
+        <button onClick={() => i18n.changeLanguage("am")} style={{ marginLeft: "10px" }}>
+          አማርኛ
+        </button>
+      </div>
+
       <button onClick={handleLogout} style={{ float: "right" }}>
-        Logout
+        {t("logout")}
       </button>
 
-      <h1>National ID Registration System</h1>
+      <h1>{t("title")}</h1>
 
       {/* FORM */}
       <form
         onSubmit={handleSubmit}
         style={{
-          maxWidth: "400px",
-          display: "flex",
-          flexDirection: "column",
-          gap: "8px",
-          marginTop: "20px"
-        }}
+  maxWidth: "450px",
+  marginTop: "20px",
+  padding: "25px",
+  borderRadius: "15px",
+  background: "linear-gradient(135deg, #3a92d1, #ffffff)",
+  boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
+  display: "flex",
+  flexDirection: "column",
+  gap: "10px"
+}}
       >
-        <input name="fullName" placeholder="Full Name"
-          value={formData.fullName} onChange={handleChange}
-          style={{ padding: "10px" }}
+        <input
+          name="fullName"
+          placeholder={t("fullName")}
+          value={formData.fullName}
+          onChange={handleChange}
         />
-        {errors.fullName && <p style={{ color: "red", margin: 0 }}>{errors.fullName}</p>}
+        {errors.fullName && <p style={{ color: "red" }}>{errors.fullName}</p>}
 
-        <input type="date" name="dob"
-          value={formData.dob} onChange={handleChange}
-          style={{ padding: "10px" }}
+        <input
+          type="date"
+          name="dob"
+          value={formData.dob}
+          onChange={handleChange}
         />
-        {errors.dob && <p style={{ color: "red", margin: 0 }}>{errors.dob}</p>}
+        {errors.dob && <p style={{ color: "red" }}>{errors.dob}</p>}
 
-        <input name="address" placeholder="Address"
-          value={formData.address} onChange={handleChange}
-          style={{ padding: "10px" }}
+        <input
+          name="address"
+          placeholder={t("address")}
+          value={formData.address}
+          onChange={handleChange}
         />
-        {errors.address && <p style={{ color: "red", margin: 0 }}>{errors.address}</p>}
+        {errors.address && <p style={{ color: "red" }}>{errors.address}</p>}
 
-        <input name="phone" placeholder="Phone Number"
-          value={formData.phone} onChange={handleChange}
-          style={{ padding: "10px" }}
+        <input
+          name="phone"
+          placeholder={t("phone")}
+          value={formData.phone}
+          onChange={handleChange}
         />
-        {errors.phone && <p style={{ color: "red", margin: 0 }}>{errors.phone}</p>}
+        {errors.phone && <p style={{ color: "red" }}>{errors.phone}</p>}
 
-        <button type="submit" style={{ padding: "10px" }}>
-          Register
-        </button>
+        <button>{t("register")}</button>
       </form>
 
       {/* SEARCH */}
       <div style={{ marginTop: "30px" }}>
-        <h3>Search Citizen by ID</h3>
+        <h3>{t("searchTitle")}</h3>
 
         <input
           placeholder="ETH-NID-000001"
           value={searchId}
           onChange={(e) => setSearchId(e.target.value)}
-          style={{ padding: "10px", marginRight: "10px" }}
         />
 
-        <button onClick={handleSearch} style={{ padding: "10px" }}>
-          Search
+        <button onClick={handleSearch}>
+          {t("search")}
         </button>
 
         {searchedUser && (
           <div style={{ marginTop: "10px", padding: "10px", border: "1px solid black" }}>
             <p><b>ID:</b> {searchedUser.id}</p>
-            <p><b>Name:</b> {searchedUser.fullName}</p>
-            <p><b>DOB:</b> {searchedUser.dob}</p>
-            <p><b>Address:</b> {searchedUser.address}</p>
-            <p><b>Phone:</b> {searchedUser.phone}</p>
+            <p><b>{t("fullName")}:</b> {searchedUser.fullName}</p>
+            <p><b>{t("dob")}:</b> {searchedUser.dob}</p>
+            <p><b>{t("address")}:</b> {searchedUser.address}</p>
+            <p><b>{t("phone")}:</b> {searchedUser.phone}</p>
           </div>
         )}
       </div>
 
       {/* TABLE */}
-      <h2 style={{ marginTop: "30px" }}>Registered Citizens</h2>
+      <h2 style={{ marginTop: "30px" }}>
+        {t("registeredList")}
+      </h2>
 
       {users.length === 0 ? (
-        <p>No citizens registered yet.</p>
+        <p>{t("noData")}</p>
       ) : (
         <table border="1" cellPadding="10">
           <thead>
             <tr>
               <th>ID</th>
-              <th>Full Name</th>
-              <th>DOB</th>
-              <th>Address</th>
-              <th>Phone</th>
+              <th>{t("fullName")}</th>
+              <th>{t("dob")}</th>
+              <th>{t("address")}</th>
+              <th>{t("phone")}</th>
             </tr>
           </thead>
 
