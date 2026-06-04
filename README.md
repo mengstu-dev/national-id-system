@@ -55,6 +55,6 @@ national-id-system/
 ## 👨‍💻 Author
 
 * Name: Mengstu birhan
-* GitHub: https://github.com/mengtu-dev
+* GitHub: https://github.com/mengstu-dev
 
 
