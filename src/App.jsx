@@ -1,14 +1,8 @@
 import { useState, useEffect } from "react";
 import Login from "./Login";
 import { collection, addDoc, getDocs } from "firebase/firestore";
-<<<<<<< HEAD
 import { db, auth } from "./firebase";
 import { signOut, onAuthStateChanged } from "firebase/auth";
-=======
-import { db } from "./firebase";
-import { signOut, onAuthStateChanged } from "firebase/auth";
-import { auth } from "./firebase";
->>>>>>> 90b5a1eabf7f703c69433b5de6e6c452c4f5ad10
 import { useTranslation } from "react-i18next";
 
 function App() {
@@ -28,11 +22,7 @@ function App() {
   const [searchedUser, setSearchedUser] = useState(null);
   const [users, setUsers] = useState([]);
 
-<<<<<<< HEAD
-  // 🔐 Auth check
-=======
-  // 🔐 auth check
->>>>>>> 90b5a1eabf7f703c69433b5de6e6c452c4f5ad10
+  // AUTH CHECK
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setIsLoggedIn(!!user);
@@ -40,21 +30,13 @@ function App() {
     return () => unsubscribe();
   }, []);
 
-<<<<<<< HEAD
-  // Logout
-=======
-  // logout
->>>>>>> 90b5a1eabf7f703c69433b5de6e6c452c4f5ad10
+  // LOGOUT
   const handleLogout = async () => {
     await signOut(auth);
     setIsLoggedIn(false);
   };
 
-<<<<<<< HEAD
-  // Load users
-=======
-  // load users
->>>>>>> 90b5a1eabf7f703c69433b5de6e6c452c4f5ad10
+  // LOAD USERS
   useEffect(() => {
     if (isLoggedIn) {
       const fetchUsers = async () => {
@@ -65,43 +47,48 @@ function App() {
     }
   }, [isLoggedIn]);
 
-<<<<<<< HEAD
-  // Validation
-=======
-  // validation
->>>>>>> 90b5a1eabf7f703c69433b5de6e6c452c4f5ad10
+  // VALIDATION
   const validateForm = () => {
     let tempErrors = {};
 
+    const nameRegex = /^[A-Za-z\u1200-\u137F\s]{2,20}$/;
     if (!formData.fullName.trim()) {
       tempErrors.fullName = t("fullNameRequired");
+    } else if (!nameRegex.test(formData.fullName.trim())) {
+      tempErrors.fullName = "Name must be 2-20 letters only.";
     }
-<<<<<<< HEAD
-    if (!formData.dob) {
-      tempErrors.dob = t("dobRequired");
-    }
+
+    const addressRegex = /^[A-Za-z\u1200-\u137F][A-Za-z0-9_\u1200-\u137F\s]*$/;
     if (!formData.address.trim()) {
       tempErrors.address = t("addressRequired");
-    }
-=======
-
-    if (!formData.dob) {
-      tempErrors.dob = t("dobRequired");
+    } else if (!addressRegex.test(formData.address.trim())) {
+      tempErrors.address = "Invalid address format.";
     }
 
-    if (!formData.address.trim()) {
-      tempErrors.address = t("addressRequired");
-    }
-
->>>>>>> 90b5a1eabf7f703c69433b5de6e6c452c4f5ad10
-    if (!formData.phone.trim()) {
+    const phone = formData.phone.trim();
+    if (!phone) {
       tempErrors.phone = t("phoneRequired");
+    } else if (phone.startsWith("09")) {
+      if (!/^09\d{8}$/.test(phone)) {
+        tempErrors.phone = "Phone must be 10 digits starting with 09.";
+      }
+    } else if (phone.startsWith("+2519")) {
+      if (!/^\+2519\d{9}$/.test(phone)) {
+        tempErrors.phone = "Phone must be +2519 followed by 9 digits.";
+      }
+    } else {
+      tempErrors.phone = "Phone must start with 09 or +2519.";
+    }
+
+    if (!formData.dob) {
+      tempErrors.dob = t("dobRequired");
     }
 
     setErrors(tempErrors);
     return Object.keys(tempErrors).length === 0;
   };
 
+  // HANDLE CHANGE
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -109,11 +96,7 @@ function App() {
     });
   };
 
-<<<<<<< HEAD
-  // Register user
-=======
-  // register
->>>>>>> 90b5a1eabf7f703c69433b5de6e6c452c4f5ad10
+  // REGISTER USER
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -144,11 +127,7 @@ function App() {
     setErrors({});
   };
 
-<<<<<<< HEAD
-  // Search user
-=======
-  // search
->>>>>>> 90b5a1eabf7f703c69433b5de6e6c452c4f5ad10
+  // SEARCH USER
   const handleSearch = async () => {
     const snapshot = await getDocs(collection(db, "citizens"));
 
@@ -164,10 +143,7 @@ function App() {
     }
   };
 
-<<<<<<< HEAD
-  // If not logged in
-=======
->>>>>>> 90b5a1eabf7f703c69433b5de6e6c452c4f5ad10
+  // NOT LOGGED IN
   if (!isLoggedIn) {
     return <Login />;
   }
@@ -175,11 +151,7 @@ function App() {
   return (
     <div style={{ padding: "20px", fontFamily: "Arial" }}>
 
-<<<<<<< HEAD
-      {/* Language switcher */}
-=======
-      {/* 🌍 LANGUAGE SWITCHER */}
->>>>>>> 90b5a1eabf7f703c69433b5de6e6c452c4f5ad10
+      {/* LANGUAGE */}
       <div style={{ marginBottom: "10px" }}>
         <button onClick={() => i18n.changeLanguage("en")}>English</button>
         <button onClick={() => i18n.changeLanguage("am")} style={{ marginLeft: "10px" }}>
@@ -194,33 +166,18 @@ function App() {
       <h1>{t("title")}</h1>
 
       {/* FORM */}
-      <form
-        onSubmit={handleSubmit}
-        style={{
-<<<<<<< HEAD
-          maxWidth: "450px",
-          marginTop: "20px",
-          padding: "25px",
-          borderRadius: "15px",
-          background: "linear-gradient(135deg, #3a92d1, #ffffff)",
-          boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
-          display: "flex",
-          flexDirection: "column",
-          gap: "10px"
-        }}
-=======
-  maxWidth: "450px",
-  marginTop: "20px",
-  padding: "25px",
-  borderRadius: "15px",
-  background: "linear-gradient(135deg, #3a92d1, #ffffff)",
-  boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
-  display: "flex",
-  flexDirection: "column",
-  gap: "10px"
-}}
->>>>>>> 90b5a1eabf7f703c69433b5de6e6c452c4f5ad10
-      >
+      <form onSubmit={handleSubmit} style={{
+        maxWidth: "450px",
+        marginTop: "20px",
+        padding: "25px",
+        borderRadius: "15px",
+        background: "linear-gradient(135deg, #3a92d1, #ffffff)",
+        boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
+        display: "flex",
+        flexDirection: "column",
+        gap: "10px"
+      }}>
+
         <input
           name="fullName"
           placeholder={t("fullName")}
@@ -253,11 +210,7 @@ function App() {
         />
         {errors.phone && <p style={{ color: "red" }}>{errors.phone}</p>}
 
-<<<<<<< HEAD
         <button type="submit">{t("register")}</button>
-=======
-        <button>{t("register")}</button>
->>>>>>> 90b5a1eabf7f703c69433b5de6e6c452c4f5ad10
       </form>
 
       {/* SEARCH */}
@@ -270,9 +223,7 @@ function App() {
           onChange={(e) => setSearchId(e.target.value)}
         />
 
-        <button onClick={handleSearch}>
-          {t("search")}
-        </button>
+        <button onClick={handleSearch}>{t("search")}</button>
 
         {searchedUser && (
           <div style={{ marginTop: "10px", padding: "10px", border: "1px solid black" }}>
@@ -286,9 +237,7 @@ function App() {
       </div>
 
       {/* TABLE */}
-      <h2 style={{ marginTop: "30px" }}>
-        {t("registeredList")}
-      </h2>
+      <h2 style={{ marginTop: "30px" }}>{t("registeredList")}</h2>
 
       {users.length === 0 ? (
         <p>{t("noData")}</p>
@@ -303,7 +252,6 @@ function App() {
               <th>{t("phone")}</th>
             </tr>
           </thead>
-
           <tbody>
             {users.map((user, index) => (
               <tr key={index}>
@@ -317,6 +265,7 @@ function App() {
           </tbody>
         </table>
       )}
+
     </div>
   );
 }
