@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { initializeApp } from "firebase/app";
 
 const firebaseConfig = {
@@ -10,3 +11,21 @@ const firebaseConfig = {
 };
 
 export const app = initializeApp(firebaseConfig);
+=======
+{
+  "hosting": {
+    "public": "dist",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
+>>>>>>> 90b5a1eabf7f703c69433b5de6e6c452c4f5ad10

@@ -1,8 +1,14 @@
 import { useState, useEffect } from "react";
 import Login from "./Login";
 import { collection, addDoc, getDocs } from "firebase/firestore";
+<<<<<<< HEAD
 import { db, auth } from "./firebase";
 import { signOut, onAuthStateChanged } from "firebase/auth";
+=======
+import { db } from "./firebase";
+import { signOut, onAuthStateChanged } from "firebase/auth";
+import { auth } from "./firebase";
+>>>>>>> 90b5a1eabf7f703c69433b5de6e6c452c4f5ad10
 import { useTranslation } from "react-i18next";
 
 function App() {
@@ -22,7 +28,11 @@ function App() {
   const [searchedUser, setSearchedUser] = useState(null);
   const [users, setUsers] = useState([]);
 
+<<<<<<< HEAD
   // 🔐 Auth check
+=======
+  // 🔐 auth check
+>>>>>>> 90b5a1eabf7f703c69433b5de6e6c452c4f5ad10
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setIsLoggedIn(!!user);
@@ -30,13 +40,21 @@ function App() {
     return () => unsubscribe();
   }, []);
 
+<<<<<<< HEAD
   // Logout
+=======
+  // logout
+>>>>>>> 90b5a1eabf7f703c69433b5de6e6c452c4f5ad10
   const handleLogout = async () => {
     await signOut(auth);
     setIsLoggedIn(false);
   };
 
+<<<<<<< HEAD
   // Load users
+=======
+  // load users
+>>>>>>> 90b5a1eabf7f703c69433b5de6e6c452c4f5ad10
   useEffect(() => {
     if (isLoggedIn) {
       const fetchUsers = async () => {
@@ -47,19 +65,35 @@ function App() {
     }
   }, [isLoggedIn]);
 
+<<<<<<< HEAD
   // Validation
+=======
+  // validation
+>>>>>>> 90b5a1eabf7f703c69433b5de6e6c452c4f5ad10
   const validateForm = () => {
     let tempErrors = {};
 
     if (!formData.fullName.trim()) {
       tempErrors.fullName = t("fullNameRequired");
     }
+<<<<<<< HEAD
     if (!formData.dob) {
       tempErrors.dob = t("dobRequired");
     }
     if (!formData.address.trim()) {
       tempErrors.address = t("addressRequired");
     }
+=======
+
+    if (!formData.dob) {
+      tempErrors.dob = t("dobRequired");
+    }
+
+    if (!formData.address.trim()) {
+      tempErrors.address = t("addressRequired");
+    }
+
+>>>>>>> 90b5a1eabf7f703c69433b5de6e6c452c4f5ad10
     if (!formData.phone.trim()) {
       tempErrors.phone = t("phoneRequired");
     }
@@ -75,7 +109,11 @@ function App() {
     });
   };
 
+<<<<<<< HEAD
   // Register user
+=======
+  // register
+>>>>>>> 90b5a1eabf7f703c69433b5de6e6c452c4f5ad10
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -106,7 +144,11 @@ function App() {
     setErrors({});
   };
 
+<<<<<<< HEAD
   // Search user
+=======
+  // search
+>>>>>>> 90b5a1eabf7f703c69433b5de6e6c452c4f5ad10
   const handleSearch = async () => {
     const snapshot = await getDocs(collection(db, "citizens"));
 
@@ -122,7 +164,10 @@ function App() {
     }
   };
 
+<<<<<<< HEAD
   // If not logged in
+=======
+>>>>>>> 90b5a1eabf7f703c69433b5de6e6c452c4f5ad10
   if (!isLoggedIn) {
     return <Login />;
   }
@@ -130,7 +175,11 @@ function App() {
   return (
     <div style={{ padding: "20px", fontFamily: "Arial" }}>
 
+<<<<<<< HEAD
       {/* Language switcher */}
+=======
+      {/* 🌍 LANGUAGE SWITCHER */}
+>>>>>>> 90b5a1eabf7f703c69433b5de6e6c452c4f5ad10
       <div style={{ marginBottom: "10px" }}>
         <button onClick={() => i18n.changeLanguage("en")}>English</button>
         <button onClick={() => i18n.changeLanguage("am")} style={{ marginLeft: "10px" }}>
@@ -148,6 +197,7 @@ function App() {
       <form
         onSubmit={handleSubmit}
         style={{
+<<<<<<< HEAD
           maxWidth: "450px",
           marginTop: "20px",
           padding: "25px",
@@ -158,6 +208,18 @@ function App() {
           flexDirection: "column",
           gap: "10px"
         }}
+=======
+  maxWidth: "450px",
+  marginTop: "20px",
+  padding: "25px",
+  borderRadius: "15px",
+  background: "linear-gradient(135deg, #3a92d1, #ffffff)",
+  boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
+  display: "flex",
+  flexDirection: "column",
+  gap: "10px"
+}}
+>>>>>>> 90b5a1eabf7f703c69433b5de6e6c452c4f5ad10
       >
         <input
           name="fullName"
@@ -191,7 +253,11 @@ function App() {
         />
         {errors.phone && <p style={{ color: "red" }}>{errors.phone}</p>}
 
+<<<<<<< HEAD
         <button type="submit">{t("register")}</button>
+=======
+        <button>{t("register")}</button>
+>>>>>>> 90b5a1eabf7f703c69433b5de6e6c452c4f5ad10
       </form>
 
       {/* SEARCH */}

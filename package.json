@@ -10,7 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+<<<<<<< HEAD
     "firebase": "^12.15.0",
+=======
+    "firebase": "^12.11.0",
+>>>>>>> 90b5a1eabf7f703c69433b5de6e6c452c4f5ad10
     "i18next": "^26.0.6",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
